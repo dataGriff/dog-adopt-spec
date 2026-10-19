@@ -60,5 +60,6 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
-  }
+  },
+  "sideEffects": false
 }

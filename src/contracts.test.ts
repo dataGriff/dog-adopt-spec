@@ -76,7 +76,7 @@ describe('seed data', () => {
     }
   });
   it('breed synonyms are unique and never a canonical name', () => {
-    const names = new Set(breeds.map((b) => b.name));
+    const names = new Set(breeds.map((b) => b.name.toLowerCase()));
     const all = breeds.flatMap((b) => b.synonyms.map((s) => s.toLowerCase()));
     expect(new Set(all).size).toBe(all.length);
     for (const s of all) expect(names.has(s)).toBe(false);

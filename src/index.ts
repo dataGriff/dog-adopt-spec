@@ -34,3 +34,9 @@ export type SnapshotSource = components['schemas']['SnapshotSource'];
 export type SnapshotResult = components['schemas']['SnapshotResult'];
 export type DailyAvailabilityReport = components['schemas']['DailyAvailabilityReport'];
 export type Health = components['schemas']['Health'];
+
+import type { z } from 'zod';
+import type { IngestRescueSnapshotBody } from './generated/zod.js';
+/** What a producer (the finder) builds: optional fields may be omitted and take the contract's defaults. */
+export type RescueSnapshotInput = z.input<typeof IngestRescueSnapshotBody>;
+export type FoundDogInput = RescueSnapshotInput['dogs'][number];

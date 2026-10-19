@@ -768,8 +768,7 @@
   {
     "name": "Mastiff",
     "synonyms": [
-      "English Mastiff",
-      "Mastiff"
+      "English Mastiff"
     ]
   },
   {
@@ -795,8 +794,7 @@
   {
     "name": "Mixed Breed",
     "synonyms": [
-      "Mixed",
-      "Mixed breed"
+      "Mixed"
     ]
   },
   {
@@ -901,9 +899,7 @@
   },
   {
     "name": "Pointer",
-    "synonyms": [
-      "Pointer"
-    ]
+    "synonyms": []
   },
   {
     "name": "Polish Lowland Sheepdog",
@@ -1199,12 +1195,6 @@
     "synonyms": [
       "Whippy",
       "Whippet Cross"
-    ]
-  },
-  {
-    "name": "Wire Fox Terrier",
-    "synonyms": [
-      "Wire Fox"
     ]
   },
   {
