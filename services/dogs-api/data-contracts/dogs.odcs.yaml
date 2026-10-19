@@ -2,7 +2,7 @@ apiVersion: v3.2.0
 kind: DataContract
 id: dogadopt-dogs
 name: Dogs
-version: 1.0.0
+version: 1.1.0
 status: active
 domain: Animal Welfare
 tenant: dogadopt
@@ -305,7 +305,12 @@ schema:
     logicalType: object
     physicalName: snapshots
     physicalType: table
-    description: One row per ingested snapshot with its reconciliation counts; the idempotency record.
+    description: >
+      One row per ingested snapshot; the idempotency record. The row is
+      claimed (status pending) before any dog is written, so a concurrent
+      replay of the same key cannot double-apply; it becomes done with its
+      result, or failed, in which case the same key and body may be
+      re-processed.
     properties:
       - name: id
         logicalType: string
@@ -347,11 +352,23 @@ schema:
         logicalType: integer
         physicalType: integer
         required: true
-      - name: result
+      - name: status
         logicalType: string
         physicalType: text
         required: true
-        description: The SnapshotResult JSON as returned.
+        description: Where the snapshot is in processing.
+        enum:
+          - value: pending
+            description: Claimed; dogs are being written. A replay of the same key answers 409 until it is done.
+          - value: done
+            description: Applied; result holds the SnapshotResult returned to the caller.
+          - value: failed
+            description: A write failed part way; a replay with the same key and body re-processes it.
+      - name: result
+        logicalType: string
+        physicalType: text
+        required: false
+        description: The SnapshotResult JSON as returned. Present only when status is done.
 
 slaProperties:
   - property: latency

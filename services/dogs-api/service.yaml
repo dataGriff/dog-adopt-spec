@@ -35,7 +35,7 @@ artifacts:
     summary: Acceptance criteria for reconciling a rescue snapshot into dog state.
   - kind: data-contract
     path: data-contracts/dogs.odcs.yaml
-    version: 1.0.0
+    version: 1.1.0
     gated: true
     summary: The dogs dataset as stored and published by the API.
   - kind: data-contract
