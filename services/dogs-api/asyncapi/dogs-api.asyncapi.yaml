@@ -1,0 +1,158 @@
+asyncapi: 3.0.0
+info:
+  title: Dogs API events
+  version: 1.0.0
+  description: >
+    Dog lifecycle events emitted by the Dogs API after a rescue snapshot is
+    reconciled, as CloudEvents 1.0 structured envelopes. One event per dog
+    per change. Delivery is at-least-once; consumers dedupe on the envelope
+    id. Ordering is only guaranteed per dog id.
+  contact:
+    name: dogadopt
+    url: https://github.com/dataGriff/dog-adopt-spec
+  tags:
+    - name: dogs
+
+defaultContentType: application/cloudevents+json
+
+servers:
+  cloudflareQueues:
+    host: queues.cloudflare.com
+    protocol: cloudflare-queues
+    description: Cloudflare Queue named dogadopt-dog-events. The binding is optional in the API; when absent no events are emitted.
+
+channels:
+  dogListed:
+    address: dogs.listed.v1
+    messages:
+      DogListed:
+        $ref: '#/components/messages/DogListed'
+  dogUpdated:
+    address: dogs.updated.v1
+    messages:
+      DogUpdated:
+        $ref: '#/components/messages/DogUpdated'
+  dogWithdrawn:
+    address: dogs.withdrawn.v1
+    messages:
+      DogWithdrawn:
+        $ref: '#/components/messages/DogWithdrawn'
+
+operations:
+  publishDogListed:
+    action: send
+    description: Emitted when a snapshot creates a dog not previously held for the rescue.
+    channel:
+      $ref: '#/channels/dogListed'
+    messages:
+      - $ref: '#/channels/dogListed/messages/DogListed'
+  publishDogUpdated:
+    action: send
+    description: Emitted when a snapshot changes one or more fields of an existing dog.
+    channel:
+      $ref: '#/channels/dogUpdated'
+    messages:
+      - $ref: '#/channels/dogUpdated/messages/DogUpdated'
+  publishDogWithdrawn:
+    action: send
+    description: Emitted when a complete snapshot no longer lists a dog and it is marked withdrawn.
+    channel:
+      $ref: '#/channels/dogWithdrawn'
+    messages:
+      - $ref: '#/channels/dogWithdrawn/messages/DogWithdrawn'
+
+components:
+  schemas:
+    Envelope:
+      type: object
+      required: [specversion, id, source, type, subject, time, datacontenttype, data]
+      properties:
+        specversion: { type: string, const: '1.0' }
+        id: { type: string, format: uuid }
+        source: { type: string, const: /dogs-api }
+        type: { type: string }
+        subject: { type: string, format: uuid, description: The dog id. }
+        time: { type: string, format: date-time }
+        datacontenttype: { type: string, const: application/json }
+    DogRef:
+      type: object
+      required: [dogId, rescueId, externalId, snapshotId, status]
+      properties:
+        dogId: { type: string, format: uuid }
+        rescueId: { type: string, format: uuid }
+        externalId: { type: string }
+        snapshotId: { type: string, format: uuid, description: The snapshot that caused the change. }
+        status:
+          type: string
+          enum: [available, reserved, fostered, on_hold, adopted, withdrawn]
+
+  messages:
+    DogListed:
+      name: DogListed
+      title: Dog listed
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type: { type: string, const: uk.co.dogadopt.dogs.listed.v1 }
+              data:
+                allOf:
+                  - $ref: '#/components/schemas/DogRef'
+                  - type: object
+                    required: [name]
+                    properties:
+                      name: { type: string }
+      examples:
+        - name: listed
+          payload:
+            specversion: '1.0'
+            id: 6f1d2c4e-0b1a-4b6e-9b2e-5d0a2f7c9e11
+            source: /dogs-api
+            type: uk.co.dogadopt.dogs.listed.v1
+            subject: 2b7c0d5a-9c3e-4f0a-8a1b-7e6d5c4b3a21
+            time: '2026-10-19T08:00:05Z'
+            datacontenttype: application/json
+            data:
+              dogId: 2b7c0d5a-9c3e-4f0a-8a1b-7e6d5c4b3a21
+              rescueId: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+              externalId: bella-2
+              snapshotId: 9d8c7b6a-5f4e-4d3c-8b2a-1f0e9d8c7b6a
+              status: available
+              name: Bella
+    DogUpdated:
+      name: DogUpdated
+      title: Dog updated
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type: { type: string, const: uk.co.dogadopt.dogs.updated.v1 }
+              data:
+                allOf:
+                  - $ref: '#/components/schemas/DogRef'
+                  - type: object
+                    required: [changedFields]
+                    properties:
+                      changedFields:
+                        type: array
+                        minItems: 1
+                        items: { type: string }
+                        description: Dog field names (camelCase, as in the OpenAPI Dog schema) that changed.
+    DogWithdrawn:
+      name: DogWithdrawn
+      title: Dog withdrawn
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type: { type: string, const: uk.co.dogadopt.dogs.withdrawn.v1 }
+              data:
+                allOf:
+                  - $ref: '#/components/schemas/DogRef'
+                  - type: object
+                    required: [lastSeenAt]
+                    properties:
+                      lastSeenAt: { type: string, format: date-time }

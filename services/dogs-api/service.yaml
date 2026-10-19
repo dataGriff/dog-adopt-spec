@@ -1,0 +1,50 @@
+apiVersion: sysspec/v1
+kind: Service
+name: dogs-api
+title: Dogs API
+domain: Animal Welfare
+owner: dogadopt
+version: 1.0.0
+summary: >
+  Owns the Dog and Rescue aggregates. Serves the public read API that the
+  web front end uses, accepts rescue snapshots from the finder over HTTP,
+  reconciles them into current dog state, and emits dog lifecycle events.
+runtime:
+  platform: cloudflare-workers
+  repository: https://github.com/dataGriff/dog-adopt-api
+artifacts:
+  - kind: openapi
+    path: openapi/dogs-api.openapi.yaml
+    version: 1.0.0
+    gated: true
+    summary: Public read API for dogs, rescues, breeds and reports, plus the finder ingest endpoint.
+  - kind: asyncapi
+    path: asyncapi/dogs-api.asyncapi.yaml
+    version: 1.0.0
+    gated: true
+    summary: Dog lifecycle events emitted after a snapshot is reconciled.
+  - kind: feature
+    path: features/browse-dogs.feature
+    version: 1.0.0
+    gated: true
+    summary: Acceptance criteria for listing, filtering and fetching dogs and rescues.
+  - kind: feature
+    path: features/ingest-snapshot.feature
+    version: 1.0.0
+    gated: true
+    summary: Acceptance criteria for reconciling a rescue snapshot into dog state.
+  - kind: data-contract
+    path: data-contracts/dogs.odcs.yaml
+    version: 1.0.0
+    gated: true
+    summary: The dogs dataset as stored and published by the API.
+  - kind: data-contract
+    path: data-contracts/rescues.odcs.yaml
+    version: 1.0.0
+    gated: true
+    summary: The rescues reference dataset.
+produces:
+  - dogs.listed.v1
+  - dogs.updated.v1
+  - dogs.withdrawn.v1
+consumes: []

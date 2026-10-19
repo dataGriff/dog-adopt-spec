@@ -1,0 +1,137 @@
+apiVersion: v3.2.0
+kind: DataContract
+id: dogadopt-rescues
+name: Rescues
+version: 1.0.0
+status: active
+domain: Animal Welfare
+tenant: dogadopt
+description:
+  purpose: >
+    Reference data for UK dog rescue organisations: who they are, where
+    they are and how to contact them. Seeded from the Association of Dogs
+    and Cats Homes membership list and maintained by hand.
+  usage: >
+    Serving listRescues and getRescue, giving each dog its rescue, and
+    computing distance from a person's location. Coordinates are of the
+    rescue's main site, not of each dog.
+  limitations: >
+    Contact details were collected from public sources and may be out of
+    date. Some rescues have no coordinates and cannot be ordered by
+    distance.
+
+context:
+  instructions: >
+    Treat name as the human identity and id as the join key. region is a
+    closed but growing list of UK regions plus National; filter on it
+    exactly. A rescue with no coordinates sorts last in distance ordering
+    and is excluded by any radius filter.
+  verifiedStatements:
+    - question: Which rescues are near a point?
+      answer: >
+        Haversine distance from (latitude, longitude) to the point, for rows
+        where both are non-null.
+  constraints:
+    - constraint: Never geocode or infer coordinates at query time; they are stored.
+
+schema:
+  - id: rescues
+    name: rescues
+    logicalType: object
+    physicalName: rescues
+    physicalType: table
+    description: One row per rescue organisation.
+    properties:
+      - id: rescue_id
+        name: id
+        logicalType: string
+        physicalType: text
+        required: true
+        unique: true
+        primaryKey: true
+        description: UUID.
+      - name: name
+        logicalType: string
+        physicalType: text
+        required: true
+        unique: true
+      - name: type
+        logicalType: string
+        physicalType: text
+        required: true
+        description: ADCH membership type.
+        enum:
+          - value: Full
+          - value: Provisional
+      - name: region
+        logicalType: string
+        physicalType: text
+        required: true
+        semanticType: dimension
+      - name: website
+        logicalType: string
+        physicalType: text
+        required: false
+        description: Absolute URL with scheme.
+      - name: phone
+        logicalType: string
+        physicalType: text
+        required: false
+      - name: email
+        logicalType: string
+        physicalType: text
+        required: false
+      - name: address
+        logicalType: string
+        physicalType: text
+        required: false
+      - name: postcode
+        logicalType: string
+        physicalType: text
+        required: false
+      - name: charity_number
+        logicalType: string
+        physicalType: text
+        required: false
+      - name: contact_notes
+        logicalType: string
+        physicalType: text
+        required: false
+      - name: latitude
+        logicalType: number
+        physicalType: real
+        required: false
+        quality:
+          - type: sql
+            description: Latitude, when present, is within the UK and Ireland.
+            dimension: accuracy
+            query: SELECT COUNT(*) FROM rescues WHERE latitude IS NOT NULL AND (latitude < 49 OR latitude > 61)
+            mustBe: 0
+      - name: longitude
+        logicalType: number
+        physicalType: real
+        required: false
+        quality:
+          - type: sql
+            description: Longitude, when present, is within the UK and Ireland.
+            dimension: accuracy
+            query: SELECT COUNT(*) FROM rescues WHERE longitude IS NOT NULL AND (longitude < -11 OR longitude > 2)
+            mustBe: 0
+      - name: created_at
+        logicalType: date
+        physicalType: text
+        required: true
+      - name: updated_at
+        logicalType: date
+        physicalType: text
+        required: true
+
+team:
+  name: dogadopt
+  members:
+    - username: dataGriff
+      role: owner
+
+support:
+  - channel: https://github.com/dataGriff/dog-adopt-api/issues
+    tool: github

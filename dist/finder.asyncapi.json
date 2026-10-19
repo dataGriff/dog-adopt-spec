@@ -1,0 +1,491 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Finder events",
+    "version": "1.0.0",
+    "description": "Messages the finder places on its own Cloudflare Queue, as CloudEvents 1.0 structured envelopes. The capture step (scheduled or manual) parses a rescue site and sends one snapshot.captured message per rescue; the queue consumer posts the snapshot to the Dogs API ingest endpoint using the envelope id as the Idempotency-Key, so a redelivered message cannot double-apply. Adapter failures are reported on a second channel so they can be seen without a dashboard.\n",
+    "contact": {
+      "name": "dogadopt",
+      "url": "https://github.com/dataGriff/dog-adopt-spec"
+    },
+    "tags": [
+      {
+        "name": "finder"
+      }
+    ]
+  },
+  "defaultContentType": "application/cloudevents+json",
+  "servers": {
+    "cloudflareQueues": {
+      "host": "queues.cloudflare.com",
+      "protocol": "cloudflare-queues",
+      "description": "Cloudflare Queue named dogadopt-finder-snapshots."
+    }
+  },
+  "channels": {
+    "snapshotCaptured": {
+      "address": "finder.snapshot.captured.v1",
+      "messages": {
+        "SnapshotCaptured": {
+          "$ref": "#/components/messages/SnapshotCaptured"
+        }
+      }
+    },
+    "adapterFailed": {
+      "address": "finder.adapter.failed.v1",
+      "messages": {
+        "AdapterFailed": {
+          "$ref": "#/components/messages/AdapterFailed"
+        }
+      }
+    }
+  },
+  "operations": {
+    "publishSnapshotCaptured": {
+      "action": "send",
+      "description": "Sent once per rescue per capture run after the adapter has parsed the site.",
+      "channel": {
+        "$ref": "#/channels/snapshotCaptured"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/snapshotCaptured/messages/SnapshotCaptured"
+        }
+      ]
+    },
+    "consumeSnapshotCaptured": {
+      "action": "receive",
+      "description": "The finder's own queue consumer. Posts data.snapshot to ingestRescueSnapshot for data.rescueId with Idempotency-Key set to the envelope id. Retries on 5xx and network errors; acks on 2xx, 4xx other than 429, and after the retry budget is spent.\n",
+      "channel": {
+        "$ref": "#/channels/snapshotCaptured"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/snapshotCaptured/messages/SnapshotCaptured"
+        }
+      ]
+    },
+    "publishAdapterFailed": {
+      "action": "send",
+      "description": "Sent when an adapter throws or returns nothing parseable.",
+      "channel": {
+        "$ref": "#/channels/adapterFailed"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/adapterFailed/messages/AdapterFailed"
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "Envelope": {
+        "type": "object",
+        "required": [
+          "specversion",
+          "id",
+          "source",
+          "type",
+          "subject",
+          "time",
+          "datacontenttype",
+          "data"
+        ],
+        "properties": {
+          "specversion": {
+            "type": "string",
+            "const": "1.0"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Also used as the ingest Idempotency-Key."
+          },
+          "source": {
+            "type": "string",
+            "const": "/finder"
+          },
+          "type": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The rescue id."
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "datacontenttype": {
+            "type": "string",
+            "const": "application/json"
+          }
+        }
+      },
+      "FoundDog": {
+        "type": "object",
+        "description": "One dog as seen on a rescue website. Only factual, non-copyrightable data: no descriptions, no copied images. `externalId` must be stable across captures of the same dog; the dog's page URL slug is the usual choice.\n",
+        "required": [
+          "externalId",
+          "name",
+          "age",
+          "size",
+          "gender",
+          "breeds"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "externalId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "status": {
+            "$ref": "#/components/schemas/FoundDogStatus",
+            "default": "available"
+          },
+          "age": {
+            "$ref": "#/components/schemas/AgeCategory"
+          },
+          "size": {
+            "$ref": "#/components/schemas/DogSize"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "breeds": {
+            "type": "array",
+            "description": "Breed names as written on the site; the API resolves synonyms.",
+            "maxItems": 5,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          },
+          "goodWithKids": {
+            "$ref": "#/components/schemas/Compatibility",
+            "default": null
+          },
+          "goodWithDogs": {
+            "$ref": "#/components/schemas/Compatibility",
+            "default": null
+          },
+          "goodWithCats": {
+            "$ref": "#/components/schemas/Compatibility",
+            "default": null
+          },
+          "profileUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "default": null
+          },
+          "imageUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "default": null
+          },
+          "birthYear": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1990,
+            "maximum": 2100,
+            "default": null
+          },
+          "birthMonth": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 12,
+            "default": null
+          },
+          "birthDay": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 31,
+            "default": null
+          },
+          "rescueSinceDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "default": null
+          }
+        }
+      },
+      "RescueSnapshot": {
+        "type": "object",
+        "description": "Every dog listed on a rescue's website at one moment.",
+        "required": [
+          "capturedAt",
+          "source",
+          "complete",
+          "dogs"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SnapshotSource"
+          },
+          "complete": {
+            "type": "boolean",
+            "description": "true when the snapshot holds every dog the site lists, so absence means withdrawn. false for a partial capture; nothing is withdrawn.\n"
+          },
+          "dogs": {
+            "type": "array",
+            "maxItems": 2000,
+            "items": {
+              "$ref": "#/components/schemas/FoundDog"
+            }
+          }
+        }
+      },
+      "FoundDogStatus": {
+        "type": "string",
+        "description": "The statuses a rescue website can express. Withdrawal is inferred by absence.",
+        "enum": [
+          "available",
+          "reserved",
+          "fostered",
+          "on_hold"
+        ]
+      },
+      "AgeCategory": {
+        "type": "string",
+        "enum": [
+          "Puppy",
+          "Young",
+          "Adult",
+          "Senior"
+        ],
+        "description": "Puppy under 1 year, Young 1 to 3 years, Adult 3 to 8 years, Senior 8 years and over. When a birth date is known the API derives this and it takes precedence over the category the source site gave.\n"
+      },
+      "DogSize": {
+        "type": "string",
+        "enum": [
+          "Small",
+          "Medium",
+          "Large"
+        ]
+      },
+      "Gender": {
+        "type": "string",
+        "enum": [
+          "Male",
+          "Female"
+        ]
+      },
+      "Compatibility": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "description": "true if good with, false if not, null if the rescue has not said."
+      },
+      "SnapshotSource": {
+        "type": "object",
+        "required": [
+          "adapter",
+          "url",
+          "mode"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "adapter": {
+            "type": "string",
+            "description": "The finder adapter name, e.g. cardiff-dogs-home.",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The listing page the snapshot came from."
+          },
+          "mode": {
+            "type": "string",
+            "description": "live means the site was fetched; fixture means saved HTML was parsed.",
+            "enum": [
+              "live",
+              "fixture"
+            ]
+          },
+          "adapterVersion": {
+            "type": "string",
+            "description": "Version of the adapter's parsing rules."
+          }
+        }
+      }
+    },
+    "messages": {
+      "SnapshotCaptured": {
+        "name": "SnapshotCaptured",
+        "title": "Rescue snapshot captured",
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/Envelope"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "uk.co.dogadopt.finder.snapshot.captured.v1"
+                },
+                "subject": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "rescueId",
+                    "snapshot"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "rescueId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "snapshot": {
+                      "$ref": "#/components/schemas/RescueSnapshot"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "examples": [
+          {
+            "name": "cardiff-fixture",
+            "payload": {
+              "specversion": "1.0",
+              "id": "9d8c7b6a-5f4e-4d3c-8b2a-1f0e9d8c7b6a",
+              "source": "/finder",
+              "type": "uk.co.dogadopt.finder.snapshot.captured.v1",
+              "subject": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+              "time": "2026-10-19T08:00:00Z",
+              "datacontenttype": "application/json",
+              "data": {
+                "rescueId": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+                "snapshot": {
+                  "capturedAt": "2026-10-19T08:00:00Z",
+                  "source": {
+                    "adapter": "cardiff-dogs-home",
+                    "url": "https://www.cardiffdogshome.co.uk/give-a-dog-a-home/dogs-available-for-rehoming/",
+                    "mode": "fixture",
+                    "adapterVersion": "1.0.0"
+                  },
+                  "complete": true,
+                  "dogs": [
+                    {
+                      "externalId": "bella-2",
+                      "name": "Bella",
+                      "status": "available",
+                      "age": "Adult",
+                      "size": "Medium",
+                      "gender": "Female",
+                      "breeds": [
+                        "Staffie"
+                      ],
+                      "goodWithKids": true,
+                      "goodWithDogs": null,
+                      "goodWithCats": false,
+                      "profileUrl": "https://www.cardiffdogshome.co.uk/dog/bella-2/",
+                      "imageUrl": null,
+                      "birthYear": 2021,
+                      "birthMonth": null,
+                      "birthDay": null,
+                      "rescueSinceDate": null
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "AdapterFailed": {
+        "name": "AdapterFailed",
+        "title": "Adapter failed",
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/Envelope"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "uk.co.dogadopt.finder.adapter.failed.v1"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "rescueId",
+                    "adapter",
+                    "mode",
+                    "message"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "rescueId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "adapter": {
+                      "type": "string"
+                    },
+                    "mode": {
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "fixture"
+                      ]
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "message": {
+                      "type": "string",
+                      "maxLength": 2000
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1232 @@
+[
+  {
+    "name": "Affenpinscher",
+    "synonyms": []
+  },
+  {
+    "name": "Afghan Hound",
+    "synonyms": []
+  },
+  {
+    "name": "Airedale Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Akbash",
+    "synonyms": []
+  },
+  {
+    "name": "Akita",
+    "synonyms": [
+      "Akita Cross",
+      "Akita Type"
+    ]
+  },
+  {
+    "name": "Alaskan Klee Kai",
+    "synonyms": []
+  },
+  {
+    "name": "Alaskan Malamute",
+    "synonyms": [
+      "Malamute",
+      "Mal"
+    ]
+  },
+  {
+    "name": "American Bulldog",
+    "synonyms": []
+  },
+  {
+    "name": "American Bully",
+    "synonyms": []
+  },
+  {
+    "name": "American Eskimo Dog",
+    "synonyms": []
+  },
+  {
+    "name": "American Foxhound",
+    "synonyms": []
+  },
+  {
+    "name": "American Hairless Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "American Pit Bull Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "American Staffordshire Terrier",
+    "synonyms": [
+      "Am Staff",
+      "Amstaff"
+    ]
+  },
+  {
+    "name": "American Water Spaniel",
+    "synonyms": []
+  },
+  {
+    "name": "Anatolian Shepherd Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Appenzeller Sennenhund",
+    "synonyms": []
+  },
+  {
+    "name": "Aussiedoodle",
+    "synonyms": []
+  },
+  {
+    "name": "Australian Cattle Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Australian Kelpie",
+    "synonyms": []
+  },
+  {
+    "name": "Australian Shepherd",
+    "synonyms": []
+  },
+  {
+    "name": "Australian Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Azawakh",
+    "synonyms": []
+  },
+  {
+    "name": "Barbet",
+    "synonyms": []
+  },
+  {
+    "name": "Basenji",
+    "synonyms": []
+  },
+  {
+    "name": "Basset Bleu de Gascogne",
+    "synonyms": []
+  },
+  {
+    "name": "Basset Fauve de Bretagne",
+    "synonyms": []
+  },
+  {
+    "name": "Basset Hound",
+    "synonyms": []
+  },
+  {
+    "name": "Bavarian Mountain Hound",
+    "synonyms": []
+  },
+  {
+    "name": "Beagle",
+    "synonyms": [
+      "Beagle Cross"
+    ]
+  },
+  {
+    "name": "Bearded Collie",
+    "synonyms": []
+  },
+  {
+    "name": "Beauceron",
+    "synonyms": []
+  },
+  {
+    "name": "Bedlington Terrier",
+    "synonyms": [
+      "Bedlington"
+    ]
+  },
+  {
+    "name": "Belgian Malinois",
+    "synonyms": [
+      "Belgian Shepherd",
+      "Malinois"
+    ]
+  },
+  {
+    "name": "Belgian Sheepdog",
+    "synonyms": []
+  },
+  {
+    "name": "Belgian Tervuren",
+    "synonyms": []
+  },
+  {
+    "name": "Bergamasco Sheepdog",
+    "synonyms": []
+  },
+  {
+    "name": "Berger Picard",
+    "synonyms": []
+  },
+  {
+    "name": "Bernedoodle",
+    "synonyms": []
+  },
+  {
+    "name": "Bernese Mountain Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Bichon Frise",
+    "synonyms": [
+      "Bichon"
+    ]
+  },
+  {
+    "name": "Black and Tan Coonhound",
+    "synonyms": []
+  },
+  {
+    "name": "Black Russian Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Bloodhound",
+    "synonyms": []
+  },
+  {
+    "name": "Blue Lacy",
+    "synonyms": []
+  },
+  {
+    "name": "Bluetick Coonhound",
+    "synonyms": []
+  },
+  {
+    "name": "Boerboel",
+    "synonyms": []
+  },
+  {
+    "name": "Bolognese",
+    "synonyms": []
+  },
+  {
+    "name": "Border Collie",
+    "synonyms": [
+      "BC",
+      "Collie Cross",
+      "Collie Type"
+    ]
+  },
+  {
+    "name": "Border Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Borzoi",
+    "synonyms": []
+  },
+  {
+    "name": "Boston Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Bouvier des Flandres",
+    "synonyms": []
+  },
+  {
+    "name": "Boxer",
+    "synonyms": []
+  },
+  {
+    "name": "Boykin Spaniel",
+    "synonyms": []
+  },
+  {
+    "name": "Bracco Italiano",
+    "synonyms": []
+  },
+  {
+    "name": "Briard",
+    "synonyms": []
+  },
+  {
+    "name": "Brittany",
+    "synonyms": []
+  },
+  {
+    "name": "Brussels Griffon",
+    "synonyms": []
+  },
+  {
+    "name": "Bull Terrier",
+    "synonyms": [
+      "English Bull Terrier"
+    ]
+  },
+  {
+    "name": "Bulldog",
+    "synonyms": [
+      "Bully",
+      "English Bulldog",
+      "Bulldog Type",
+      "Bull Type"
+    ]
+  },
+  {
+    "name": "Bullmastiff",
+    "synonyms": []
+  },
+  {
+    "name": "Cairn Terrier",
+    "synonyms": [
+      "Cairn"
+    ]
+  },
+  {
+    "name": "Canaan Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Cane Corso",
+    "synonyms": []
+  },
+  {
+    "name": "Cardigan Welsh Corgi",
+    "synonyms": [
+      "Cardigan Corgi"
+    ]
+  },
+  {
+    "name": "Carolina Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Catahoula Leopard Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Caucasian Shepherd Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Cavalier King Charles Spaniel",
+    "synonyms": [
+      "King Charles",
+      "King Charles Spaniel",
+      "Cavalier"
+    ]
+  },
+  {
+    "name": "Cavapoo",
+    "synonyms": []
+  },
+  {
+    "name": "Central Asian Shepherd Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Cesky Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Chesapeake Bay Retriever",
+    "synonyms": []
+  },
+  {
+    "name": "Chihuahua",
+    "synonyms": [
+      "Chi",
+      "Chih",
+      "Chihuahua Cross"
+    ]
+  },
+  {
+    "name": "Chinese Crested",
+    "synonyms": []
+  },
+  {
+    "name": "Chinese Shar-Pei",
+    "synonyms": [
+      "Shar Pei",
+      "Shar-Pei",
+      "Sharpei",
+      "Chinese Shar Pei"
+    ]
+  },
+  {
+    "name": "Chinook",
+    "synonyms": []
+  },
+  {
+    "name": "Chorkie",
+    "synonyms": []
+  },
+  {
+    "name": "Chow Chow",
+    "synonyms": []
+  },
+  {
+    "name": "Cirneco dell'Etna",
+    "synonyms": []
+  },
+  {
+    "name": "Clumber Spaniel",
+    "synonyms": []
+  },
+  {
+    "name": "Cockapoo",
+    "synonyms": []
+  },
+  {
+    "name": "Cocker Spaniel",
+    "synonyms": [
+      "Cocker",
+      "Spaniel",
+      "Spaniel Cross",
+      "Spaniel Type"
+    ]
+  },
+  {
+    "name": "Collie",
+    "synonyms": [
+      "Rough Collie",
+      "Smooth Collie"
+    ]
+  },
+  {
+    "name": "Coton de Tulear",
+    "synonyms": []
+  },
+  {
+    "name": "Crossbreed",
+    "synonyms": [
+      "Cross Breed",
+      "Mongrel",
+      "Mutt",
+      "Heinz 57"
+    ]
+  },
+  {
+    "name": "Curly-Coated Retriever",
+    "synonyms": []
+  },
+  {
+    "name": "Dachshund",
+    "synonyms": [
+      "Sausage Dog",
+      "Daxie",
+      "Daschund",
+      "Dachsund",
+      "Dachshund Cross"
+    ]
+  },
+  {
+    "name": "Dalmatian",
+    "synonyms": []
+  },
+  {
+    "name": "Dandie Dinmont Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Doberman Pinscher",
+    "synonyms": [
+      "Dobie",
+      "Doberman",
+      "Dobermann"
+    ]
+  },
+  {
+    "name": "Dogo Argentino",
+    "synonyms": []
+  },
+  {
+    "name": "Dogue de Bordeaux",
+    "synonyms": []
+  },
+  {
+    "name": "Dutch Shepherd",
+    "synonyms": []
+  },
+  {
+    "name": "English Cocker Spaniel",
+    "synonyms": [
+      "English Cocker"
+    ]
+  },
+  {
+    "name": "English Foxhound",
+    "synonyms": []
+  },
+  {
+    "name": "English Setter",
+    "synonyms": []
+  },
+  {
+    "name": "English Springer Spaniel",
+    "synonyms": [
+      "Springer",
+      "Springer Spaniel"
+    ]
+  },
+  {
+    "name": "English Toy Spaniel",
+    "synonyms": []
+  },
+  {
+    "name": "Entlebucher Mountain Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Estrela Mountain Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Eurasier",
+    "synonyms": []
+  },
+  {
+    "name": "Field Spaniel",
+    "synonyms": []
+  },
+  {
+    "name": "Finnish Lapphund",
+    "synonyms": []
+  },
+  {
+    "name": "Finnish Spitz",
+    "synonyms": []
+  },
+  {
+    "name": "Flat-Coated Retriever",
+    "synonyms": [
+      "Flat Coat",
+      "Flat Coated Retriever"
+    ]
+  },
+  {
+    "name": "Fox Terrier (Smooth)",
+    "synonyms": [
+      "Smooth Fox Terrier"
+    ]
+  },
+  {
+    "name": "Fox Terrier (Wire)",
+    "synonyms": [
+      "Wire Fox Terrier"
+    ]
+  },
+  {
+    "name": "French Bulldog",
+    "synonyms": [
+      "Frenchie"
+    ]
+  },
+  {
+    "name": "German Pinscher",
+    "synonyms": []
+  },
+  {
+    "name": "German Shepherd",
+    "synonyms": [
+      "GSD",
+      "Alsatian",
+      "German Shepherd Dog",
+      "Shepherd",
+      "Shepherd Cross",
+      "Shepherd Type",
+      "GSD Cross"
+    ]
+  },
+  {
+    "name": "German Shorthaired Pointer",
+    "synonyms": []
+  },
+  {
+    "name": "German Spitz",
+    "synonyms": [
+      "Spitz"
+    ]
+  },
+  {
+    "name": "German Wirehaired Pointer",
+    "synonyms": []
+  },
+  {
+    "name": "Giant Schnauzer",
+    "synonyms": []
+  },
+  {
+    "name": "Glen of Imaal Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Golden Retriever",
+    "synonyms": [
+      "Golden",
+      "Goldie"
+    ]
+  },
+  {
+    "name": "Goldendoodle",
+    "synonyms": []
+  },
+  {
+    "name": "Gordon Setter",
+    "synonyms": []
+  },
+  {
+    "name": "Grand Basset Griffon Vendéen",
+    "synonyms": []
+  },
+  {
+    "name": "Great Dane",
+    "synonyms": [
+      "Dane"
+    ]
+  },
+  {
+    "name": "Great Pyrenees",
+    "synonyms": []
+  },
+  {
+    "name": "Greater Swiss Mountain Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Greyhound",
+    "synonyms": [
+      "Grey",
+      "Hound",
+      "Greyhound Cross",
+      "Greyhound Type"
+    ]
+  },
+  {
+    "name": "Hamiltonstovare",
+    "synonyms": []
+  },
+  {
+    "name": "Harrier",
+    "synonyms": []
+  },
+  {
+    "name": "Havanese",
+    "synonyms": []
+  },
+  {
+    "name": "Hovawart",
+    "synonyms": []
+  },
+  {
+    "name": "Ibizan Hound",
+    "synonyms": []
+  },
+  {
+    "name": "Icelandic Sheepdog",
+    "synonyms": []
+  },
+  {
+    "name": "Irish Red and White Setter",
+    "synonyms": []
+  },
+  {
+    "name": "Irish Setter",
+    "synonyms": [
+      "Setter"
+    ]
+  },
+  {
+    "name": "Irish Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Irish Water Spaniel",
+    "synonyms": []
+  },
+  {
+    "name": "Irish Wolfhound",
+    "synonyms": []
+  },
+  {
+    "name": "Italian Greyhound",
+    "synonyms": [
+      "Iggy"
+    ]
+  },
+  {
+    "name": "Jack Russell Terrier",
+    "synonyms": [
+      "JRT",
+      "Jack Russell"
+    ]
+  },
+  {
+    "name": "Japanese Chin",
+    "synonyms": []
+  },
+  {
+    "name": "Japanese Spitz",
+    "synonyms": []
+  },
+  {
+    "name": "Jindo",
+    "synonyms": []
+  },
+  {
+    "name": "Kai Ken",
+    "synonyms": []
+  },
+  {
+    "name": "Karelian Bear Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Keeshond",
+    "synonyms": []
+  },
+  {
+    "name": "Kerry Blue Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Komondor",
+    "synonyms": []
+  },
+  {
+    "name": "Kooikerhondje",
+    "synonyms": []
+  },
+  {
+    "name": "Korean Jindo",
+    "synonyms": []
+  },
+  {
+    "name": "Kuvasz",
+    "synonyms": []
+  },
+  {
+    "name": "Labradoodle",
+    "synonyms": []
+  },
+  {
+    "name": "Labrador Retriever",
+    "synonyms": [
+      "Lab",
+      "Labrador",
+      "Retriever",
+      "Lab Cross",
+      "Lab Type"
+    ]
+  },
+  {
+    "name": "Lagotto Romagnolo",
+    "synonyms": []
+  },
+  {
+    "name": "Lakeland Terrier",
+    "synonyms": [
+      "Lakeland"
+    ]
+  },
+  {
+    "name": "Lancashire Heeler",
+    "synonyms": []
+  },
+  {
+    "name": "Leonberger",
+    "synonyms": []
+  },
+  {
+    "name": "Lhasa Apso",
+    "synonyms": [
+      "Lhasa"
+    ]
+  },
+  {
+    "name": "Lowchen",
+    "synonyms": []
+  },
+  {
+    "name": "Lurcher",
+    "synonyms": [
+      "Lurcher Type"
+    ]
+  },
+  {
+    "name": "Maltese",
+    "synonyms": []
+  },
+  {
+    "name": "Maltipoo",
+    "synonyms": []
+  },
+  {
+    "name": "Manchester Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Mastiff",
+    "synonyms": [
+      "English Mastiff",
+      "Mastiff"
+    ]
+  },
+  {
+    "name": "Miniature American Shepherd",
+    "synonyms": []
+  },
+  {
+    "name": "Miniature Bull Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Miniature Pinscher",
+    "synonyms": [
+      "Pinscher"
+    ]
+  },
+  {
+    "name": "Miniature Schnauzer",
+    "synonyms": [
+      "Mini Schnauzer"
+    ]
+  },
+  {
+    "name": "Mixed Breed",
+    "synonyms": [
+      "Mixed",
+      "Mixed breed"
+    ]
+  },
+  {
+    "name": "Morkie",
+    "synonyms": []
+  },
+  {
+    "name": "Neapolitan Mastiff",
+    "synonyms": [
+      "Neo",
+      "Neapolitan"
+    ]
+  },
+  {
+    "name": "Newfoundland",
+    "synonyms": [
+      "Newfie"
+    ]
+  },
+  {
+    "name": "Norfolk Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Norwegian Buhund",
+    "synonyms": []
+  },
+  {
+    "name": "Norwegian Elkhound",
+    "synonyms": []
+  },
+  {
+    "name": "Norwegian Lundehund",
+    "synonyms": []
+  },
+  {
+    "name": "Norwich Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Nova Scotia Duck Tolling Retriever",
+    "synonyms": []
+  },
+  {
+    "name": "Old English Sheepdog",
+    "synonyms": [
+      "OES",
+      "Sheepdog"
+    ]
+  },
+  {
+    "name": "Otterhound",
+    "synonyms": []
+  },
+  {
+    "name": "Papillon",
+    "synonyms": [
+      "Papillion"
+    ]
+  },
+  {
+    "name": "Parson Russell Terrier",
+    "synonyms": [
+      "Parson Russell",
+      "PRT"
+    ]
+  },
+  {
+    "name": "Patterdale Terrier",
+    "synonyms": [
+      "Patterdale"
+    ]
+  },
+  {
+    "name": "Pekingese",
+    "synonyms": [
+      "Peke"
+    ]
+  },
+  {
+    "name": "Pembroke Welsh Corgi",
+    "synonyms": [
+      "Corgi",
+      "Pembroke Corgi"
+    ]
+  },
+  {
+    "name": "Peruvian Inca Orchid",
+    "synonyms": []
+  },
+  {
+    "name": "Petit Basset Griffon Vendéen",
+    "synonyms": []
+  },
+  {
+    "name": "Pharaoh Hound",
+    "synonyms": []
+  },
+  {
+    "name": "Plott Hound",
+    "synonyms": []
+  },
+  {
+    "name": "Pointer",
+    "synonyms": [
+      "Pointer"
+    ]
+  },
+  {
+    "name": "Polish Lowland Sheepdog",
+    "synonyms": []
+  },
+  {
+    "name": "Pomeranian",
+    "synonyms": [
+      "Pom"
+    ]
+  },
+  {
+    "name": "Pomsky",
+    "synonyms": []
+  },
+  {
+    "name": "Poodle (Miniature)",
+    "synonyms": [
+      "Miniature Poodle",
+      "Mini Poodle"
+    ]
+  },
+  {
+    "name": "Poodle (Standard)",
+    "synonyms": [
+      "Standard Poodle",
+      "Poodle",
+      "Poodle Cross"
+    ]
+  },
+  {
+    "name": "Poodle (Toy)",
+    "synonyms": [
+      "Toy Poodle"
+    ]
+  },
+  {
+    "name": "Portuguese Podengo Pequeno",
+    "synonyms": []
+  },
+  {
+    "name": "Portuguese Water Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Pug",
+    "synonyms": []
+  },
+  {
+    "name": "Puggle",
+    "synonyms": []
+  },
+  {
+    "name": "Puli",
+    "synonyms": []
+  },
+  {
+    "name": "Pumi",
+    "synonyms": []
+  },
+  {
+    "name": "Pyrenean Mastiff",
+    "synonyms": []
+  },
+  {
+    "name": "Pyrenean Shepherd",
+    "synonyms": []
+  },
+  {
+    "name": "Rat Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Redbone Coonhound",
+    "synonyms": []
+  },
+  {
+    "name": "Rhodesian Ridgeback",
+    "synonyms": [
+      "Ridgeback",
+      "Rhodesian"
+    ]
+  },
+  {
+    "name": "Rottweiler",
+    "synonyms": [
+      "Rottie",
+      "Rotty",
+      "Rottweiler Cross"
+    ]
+  },
+  {
+    "name": "Russian Toy",
+    "synonyms": []
+  },
+  {
+    "name": "Saint Bernard",
+    "synonyms": [
+      "Saint",
+      "St Bernard",
+      "St. Bernard"
+    ]
+  },
+  {
+    "name": "Saluki",
+    "synonyms": []
+  },
+  {
+    "name": "Samoyed",
+    "synonyms": []
+  },
+  {
+    "name": "Schipperke",
+    "synonyms": []
+  },
+  {
+    "name": "Schnoodle",
+    "synonyms": []
+  },
+  {
+    "name": "Scottish Deerhound",
+    "synonyms": []
+  },
+  {
+    "name": "Scottish Terrier",
+    "synonyms": [
+      "Scottie"
+    ]
+  },
+  {
+    "name": "Sealyham Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Sheepadoodle",
+    "synonyms": []
+  },
+  {
+    "name": "Shetland Sheepdog",
+    "synonyms": []
+  },
+  {
+    "name": "Shiba Inu",
+    "synonyms": []
+  },
+  {
+    "name": "Shih Tzu",
+    "synonyms": [
+      "Shih-Tzu",
+      "Shihtzu"
+    ]
+  },
+  {
+    "name": "Shorkie",
+    "synonyms": []
+  },
+  {
+    "name": "Siberian Husky",
+    "synonyms": [
+      "Husky",
+      "Sibe",
+      "Husky Cross",
+      "Husky Type"
+    ]
+  },
+  {
+    "name": "Silky Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Skye Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Sloughi",
+    "synonyms": []
+  },
+  {
+    "name": "Small Munsterlander",
+    "synonyms": []
+  },
+  {
+    "name": "Soft Coated Wheaten Terrier",
+    "synonyms": [
+      "Wheaten",
+      "Wheaten Terrier"
+    ]
+  },
+  {
+    "name": "Spanish Mastiff",
+    "synonyms": []
+  },
+  {
+    "name": "Spanish Water Dog",
+    "synonyms": []
+  },
+  {
+    "name": "Spinone Italiano",
+    "synonyms": []
+  },
+  {
+    "name": "Staffordshire Bull Terrier",
+    "synonyms": [
+      "Staffie",
+      "Staffy",
+      "Staff",
+      "SBT",
+      "Stafford",
+      "Staffordshire Terrier",
+      "Staffordshire",
+      "Staffy Cross",
+      "Staffie Cross",
+      "Staff Cross",
+      "Staffie Type",
+      "Staffy Type"
+    ]
+  },
+  {
+    "name": "Standard Schnauzer",
+    "synonyms": [
+      "Schnauzer"
+    ]
+  },
+  {
+    "name": "Sussex Spaniel",
+    "synonyms": []
+  },
+  {
+    "name": "Swedish Vallhund",
+    "synonyms": []
+  },
+  {
+    "name": "Terrier Mix",
+    "synonyms": [
+      "Terrier Cross",
+      "Terrier X",
+      "Terrier"
+    ]
+  },
+  {
+    "name": "Tibetan Mastiff",
+    "synonyms": [
+      "Tibetan Mast"
+    ]
+  },
+  {
+    "name": "Tibetan Spaniel",
+    "synonyms": []
+  },
+  {
+    "name": "Tibetan Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Toy Fox Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "Treeing Walker Coonhound",
+    "synonyms": []
+  },
+  {
+    "name": "Vizsla",
+    "synonyms": [
+      "Viszla"
+    ]
+  },
+  {
+    "name": "Weimaraner",
+    "synonyms": [
+      "Weim"
+    ]
+  },
+  {
+    "name": "Welsh Springer Spaniel",
+    "synonyms": [
+      "Welsh Springer"
+    ]
+  },
+  {
+    "name": "Welsh Terrier",
+    "synonyms": []
+  },
+  {
+    "name": "West Highland White Terrier",
+    "synonyms": [
+      "Westie",
+      "West Highland Terrier"
+    ]
+  },
+  {
+    "name": "Whippet",
+    "synonyms": [
+      "Whippy",
+      "Whippet Cross"
+    ]
+  },
+  {
+    "name": "Wire Fox Terrier",
+    "synonyms": [
+      "Wire Fox"
+    ]
+  },
+  {
+    "name": "Wirehaired Pointing Griffon",
+    "synonyms": []
+  },
+  {
+    "name": "Wirehaired Vizsla",
+    "synonyms": []
+  },
+  {
+    "name": "Xoloitzcuintli",
+    "synonyms": []
+  },
+  {
+    "name": "Yorkipoo",
+    "synonyms": []
+  },
+  {
+    "name": "Yorkshire Terrier",
+    "synonyms": [
+      "Yorkie"
+    ]
+  }
+]

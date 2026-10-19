@@ -1,0 +1,19 @@
+apiVersion: sysspec/v1
+kind: System
+name: dogadopt
+title: Dog Adopt
+domain: Animal Welfare
+org: uk.co.dogadopt
+summary: >
+  Dog Adopt aggregates dogs available for adoption from UK rescue
+  organisations into one searchable place. The finder captures listings
+  from rescue websites as snapshots, the dogs API ingests those snapshots
+  and serves the current state of every dog and rescue, and the web
+  front end lets the public browse and filter them. Every service is built
+  against the contracts in this repository: the OpenAPI, AsyncAPI,
+  feature files and data contracts here are the record, and an
+  implementation that disagrees with them is wrong.
+services:
+  - services/dogs-api/service.yaml
+  - services/finder/service.yaml
+  - services/web/service.yaml
