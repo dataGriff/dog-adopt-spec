@@ -3,11 +3,12 @@
 // Output is committed so consumers can install this package straight from
 // git without a build step; CI runs check-drift to prove it is current.
 import { execSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { mkdirSync, readFileSync, writeFileSync, copyFileSync, rmSync } from 'node:fs';
 import { parse } from 'yaml';
 import openapiTS, { astToString } from 'openapi-typescript';
 
-const root = new URL('..', import.meta.url).pathname;
+const root = fileURLToPath(new URL('..', import.meta.url));
 const run = (cmd) => execSync(cmd, { cwd: root, stdio: 'inherit' });
 
 mkdirSync(`${root}src/generated`, { recursive: true });

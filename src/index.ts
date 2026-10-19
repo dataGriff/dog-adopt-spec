@@ -10,6 +10,8 @@ export * from './events.js';
 export * from './client.js';
 export * from './constants.js';
 export * from './query.js';
+export * from './security.js';
+export * from './problems.js';
 
 import type { components } from './generated/openapi.js';
 
@@ -25,7 +27,6 @@ export type RescuePage = components['schemas']['RescuePage'];
 export type RescueSummary = components['schemas']['RescueSummary'];
 export type RescueType = components['schemas']['RescueType'];
 export type Breed = components['schemas']['Breed'];
-export type Problem = components['schemas']['Problem'];
 export type PageMeta = components['schemas']['PageMeta'];
 export type FoundDog = components['schemas']['FoundDog'];
 export type FoundDogStatus = components['schemas']['FoundDogStatus'];

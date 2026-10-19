@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { adapterFailedEvent, dogListedEvent, dogUpdatedEvent, dogWithdrawnEvent, makeEvent, snapshotCapturedEvent } from './events.js';
 import { EVENT_SOURCES, EVENT_TYPES } from './constants.js';
 
-const root = new URL('..', import.meta.url).pathname;
+const root = fileURLToPath(new URL('..', import.meta.url));
 const finder = JSON.parse(readFileSync(`${root}dist/finder.asyncapi.json`, 'utf8'));
 const dogsApi = JSON.parse(readFileSync(`${root}dist/dogs-api.asyncapi.json`, 'utf8'));
 

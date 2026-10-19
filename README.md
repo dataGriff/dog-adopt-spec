@@ -43,6 +43,8 @@ import {
   IngestRescueSnapshotBody,
   normalizeQuery, LIST_DOGS_QUERY_SHAPE,  // URLSearchParams -> what the zod query schemas expect
   snapshotCapturedEvent, makeEvent,       // CloudEvents envelopes for every AsyncAPI message
+  problemResponse, ProblemError, issuesToErrors,   // RFC 9457 bodies with the contract's errorCodes
+  bearerMatches, canonicalJson, sha256Hex,         // service-token check and idempotency hashing
   EVENT_TYPES, CHANNELS, QUEUES, ENQUIRABLE_STATUSES, ageCategoryFromBirth,
   type Dog, type Rescue, type RescueSnapshot, type paths,
 } from '@dogadopt/contracts';
@@ -50,10 +52,10 @@ import openapi from '@dogadopt/contracts/openapi.json';
 import rescues from '@dogadopt/contracts/seed/rescues.json';
 ```
 
-Install it from git. While the work is on a branch, pin the branch; on release, pin a tag:
+Install it from git, pinned to a commit so an install without the lockfile resolves to exactly what was tested (on release, pin a tag instead):
 
 ```json
-"@dogadopt/contracts": "github:dataGriff/dog-adopt-spec#ccr-36d5f29f-ktwvoo"
+"@dogadopt/contracts": "github:dataGriff/dog-adopt-spec#<commit sha>"
 ```
 
 `dist/` is committed so no build runs on install. CI fails if `dist/` or `src/generated/` is stale.

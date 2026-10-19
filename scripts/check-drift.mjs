@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Fails if `npm run generate` would change anything that is committed.
 import { execSync } from 'node:child_process';
-const root = new URL('..', import.meta.url).pathname;
+import { fileURLToPath } from 'node:url';
+const root = fileURLToPath(new URL('..', import.meta.url));
 execSync('node scripts/generate.mjs', { cwd: root, stdio: 'inherit' });
 const diff = execSync('git status --porcelain -- dist src/generated', { cwd: root }).toString().trim();
 if (diff) {

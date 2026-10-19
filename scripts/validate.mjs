@@ -3,13 +3,14 @@
 // the official parser, the feature files with the Gherkin parser, the data
 // contracts and service manifests structurally. Exit code 1 on any problem.
 import { execSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { readFileSync, existsSync } from 'node:fs';
 import { parse } from 'yaml';
 import { Parser } from '@asyncapi/parser';
 import { GherkinClassicTokenMatcher, Parser as GherkinParser, AstBuilder } from '@cucumber/gherkin';
 import { IdGenerator } from '@cucumber/messages';
 
-const root = new URL('..', import.meta.url).pathname;
+const root = fileURLToPath(new URL('..', import.meta.url));
 let failures = 0;
 const fail = (msg) => { failures++; console.error(`  ✖ ${msg}`); };
 const ok = (msg) => console.log(`  ✔ ${msg}`);

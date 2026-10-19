@@ -8,3 +8,5 @@ export * from './events.js';
 export * from './client.js';
 export * from './constants.js';
 export * from './query.js';
+export * from './security.js';
+export * from './problems.js';

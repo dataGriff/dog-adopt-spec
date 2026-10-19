@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { ListDogsQueryParams, ListRescuesQueryParams, GetDog200Response, IngestRescueSnapshotBody } from './generated/zod.js';
 import { LIST_DOGS_QUERY_SHAPE, LIST_RESCUES_QUERY_SHAPE, normalizeQuery } from './query.js';
 import { ageCategoryFromBirth, PAGE_SIZE_DEFAULT } from './constants.js';
 
-const root = new URL('..', import.meta.url).pathname;
+const root = fileURLToPath(new URL('..', import.meta.url));
 
 describe('normalizeQuery with the generated query schemas', () => {
   it('applies defaults and parses comma separated and repeated arrays', () => {
