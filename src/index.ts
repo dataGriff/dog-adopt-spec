@@ -1,0 +1,43 @@
+// @dogadopt/contracts
+//
+// The one package every Dog Adopt service installs. Everything here is
+// derived from the contracts under services/; nothing is hand-maintained
+// except the small helpers at the bottom.
+
+export type { paths, components, operations } from './generated/openapi.js';
+export * from './generated/zod.js';
+export * from './events.js';
+export * from './client.js';
+export * from './constants.js';
+export * from './query.js';
+export * from './security.js';
+export * from './problems.js';
+
+import type { components } from './generated/openapi.js';
+
+export type Dog = components['schemas']['Dog'];
+export type DogPage = components['schemas']['DogPage'];
+export type DogStatus = components['schemas']['DogStatus'];
+export type AgeCategory = components['schemas']['AgeCategory'];
+export type DogSize = components['schemas']['DogSize'];
+export type Gender = components['schemas']['Gender'];
+export type Compatibility = components['schemas']['Compatibility'];
+export type Rescue = components['schemas']['Rescue'];
+export type RescuePage = components['schemas']['RescuePage'];
+export type RescueSummary = components['schemas']['RescueSummary'];
+export type RescueType = components['schemas']['RescueType'];
+export type Breed = components['schemas']['Breed'];
+export type PageMeta = components['schemas']['PageMeta'];
+export type FoundDog = components['schemas']['FoundDog'];
+export type FoundDogStatus = components['schemas']['FoundDogStatus'];
+export type RescueSnapshot = components['schemas']['RescueSnapshot'];
+export type SnapshotSource = components['schemas']['SnapshotSource'];
+export type SnapshotResult = components['schemas']['SnapshotResult'];
+export type DailyAvailabilityReport = components['schemas']['DailyAvailabilityReport'];
+export type Health = components['schemas']['Health'];
+
+import type { z } from 'zod';
+import type { IngestRescueSnapshotBody } from './generated/zod.js';
+/** What a producer (the finder) builds: optional fields may be omitted and take the contract's defaults. */
+export type RescueSnapshotInput = z.input<typeof IngestRescueSnapshotBody>;
+export type FoundDogInput = RescueSnapshotInput['dogs'][number];

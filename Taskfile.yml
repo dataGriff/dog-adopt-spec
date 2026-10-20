@@ -1,0 +1,24 @@
+version: "3"
+
+tasks:
+  default:
+    desc: List tasks
+    cmds: [task --list]
+  install:
+    desc: Install dependencies
+    cmds: [pnpm install]
+  validate:
+    desc: Lint and parse every contract
+    cmds: [pnpm validate]
+  generate:
+    desc: Regenerate types, zod schemas, bundled documents and dist
+    cmds: [pnpm generate]
+  test:
+    desc: Run the package tests
+    cmds: [pnpm test]
+  build:
+    desc: Validate, generate, typecheck and test
+    cmds: [pnpm build]
+  check:
+    desc: What CI runs
+    cmds: [pnpm validate, pnpm check:drift, pnpm typecheck, pnpm test]

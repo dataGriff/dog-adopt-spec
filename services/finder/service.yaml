@@ -1,0 +1,34 @@
+apiVersion: sysspec/v1
+kind: Service
+name: finder
+title: Finder
+domain: Animal Welfare
+owner: dogadopt
+version: 1.0.0
+summary: >
+  Captures the dogs listed on each rescue website as a snapshot. One
+  adapter per rescue site parses the site's HTML into the shared
+  RescueSnapshot shape; snapshots are queued and then posted to the Dogs
+  API ingest endpoint. Live fetching is off by default: adapters run
+  against saved fixtures until a site is explicitly enabled.
+runtime:
+  platform: cloudflare-workers
+  repository: https://github.com/dataGriff/dog-adopt-finder
+artifacts:
+  - kind: asyncapi
+    path: asyncapi/finder.asyncapi.yaml
+    version: 1.0.0
+    gated: true
+    summary: Snapshot captured and adapter failed events carried on the finder queue.
+  - kind: feature
+    path: features/capture-snapshot.feature
+    version: 1.0.0
+    gated: true
+    summary: Acceptance criteria for capturing, queuing and posting rescue snapshots.
+produces:
+  - finder.snapshot.captured.v1
+  - finder.adapter.failed.v1
+consumes: []
+dependsOn:
+  - service: dogs-api
+    operation: ingestRescueSnapshot

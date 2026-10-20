@@ -1,0 +1,387 @@
+apiVersion: v3.2.0
+kind: DataContract
+id: dogadopt-dogs
+name: Dogs
+version: 1.1.0
+status: active
+domain: Animal Welfare
+tenant: dogadopt
+description:
+  purpose: >
+    The current state of every dog Dog Adopt knows about, one row per dog,
+    updated in place as the finder reconciles rescue snapshots. This is the
+    table the Dogs API reads to answer listDogs and getDog, so what the API
+    returns is this record mapped to camelCase.
+  usage: >
+    Serving the public API, counting dogs per rescue, and the daily
+    availability report (through dog_status_events, below). Not an audit
+    trail of what a rescue's website said on a given day; the snapshots
+    table holds that summary.
+  limitations: >
+    Dogs are only as current as the last successful snapshot for their
+    rescue; see last_seen_at. A dog entered by hand (external_id null) is
+    never withdrawn by the finder. Descriptions and images are never
+    copied from rescue websites: description is only ever hand written and
+    image_url is a link.
+
+context:
+  instructions: >
+    Count "dogs available for adoption" as rows with status in available,
+    reserved, fostered, on_hold; adopted and withdrawn are history. Match a
+    dog to its source listing on (rescue_id, external_id), never on name.
+    Breeds live in dog_breeds in display order; the first is the primary
+    breed. Age is derived from birth_year/month/day when known, otherwise
+    the stored age category stands.
+  verifiedStatements:
+    - question: How many dogs does a rescue currently list?
+      answer: >
+        Count dogs where rescue_id matches and status in (available,
+        reserved, fostered, on_hold). This is the dogCount the API returns.
+    - question: When did a dog stop being listed?
+      answer: >
+        For status withdrawn, last_seen_at is the last capture that listed
+        it. The withdrawing capture is in dog_status_events.
+    - question: How many dogs were available on a given day?
+      answer: >
+        Replay dog_status_events up to the end of that day (UTC) and count
+        dogs whose latest status is available. Days before the first event
+        count zero.
+  constraints:
+    - constraint: Never present withdrawn or adopted dogs as adoptable.
+    - constraint: Never copy a description or image from a rescue website into this record.
+    - constraint: Never change external_id once set; it is the identity across captures.
+
+schema:
+  - id: dogs
+    name: dogs
+    logicalType: object
+    physicalName: dogs
+    physicalType: table
+    description: One row per dog, current state.
+    properties:
+      - id: dog_id
+        name: id
+        logicalType: string
+        physicalType: text
+        required: true
+        unique: true
+        primaryKey: true
+        description: UUID.
+      - name: rescue_id
+        logicalType: string
+        physicalType: text
+        required: true
+        description: UUID of the rescue in rescues.
+      - name: external_id
+        logicalType: string
+        physicalType: text
+        required: false
+        description: The finder's stable id for the dog within its rescue. Null for hand-entered dogs. Unique with rescue_id when present.
+      - name: name
+        logicalType: string
+        physicalType: text
+        required: true
+      - name: status
+        logicalType: string
+        physicalType: text
+        required: true
+        enum:
+          - value: available
+            label: Available
+          - value: reserved
+            label: Reserved
+          - value: fostered
+            label: Fostered
+          - value: on_hold
+            label: On hold
+          - value: adopted
+            label: Adopted
+          - value: withdrawn
+            label: Withdrawn
+            description: No longer listed by the rescue. Set by the finder on absence from a complete snapshot.
+        quality:
+          - metric: invalidValues
+            description: Every status is one of the declared values.
+            dimension: conformity
+            mustBe: 0
+      - name: status_notes
+        logicalType: string
+        physicalType: text
+        required: false
+      - name: age
+        logicalType: string
+        physicalType: text
+        required: true
+        description: Age category as given by the source; the API derives from birth date when known.
+        enum:
+          - value: Puppy
+          - value: Young
+          - value: Adult
+          - value: Senior
+      - name: birth_year
+        logicalType: integer
+        physicalType: integer
+        required: false
+      - name: birth_month
+        logicalType: integer
+        physicalType: integer
+        required: false
+      - name: birth_day
+        logicalType: integer
+        physicalType: integer
+        required: false
+      - name: size
+        logicalType: string
+        physicalType: text
+        required: true
+        enum:
+          - value: Small
+          - value: Medium
+          - value: Large
+      - name: gender
+        logicalType: string
+        physicalType: text
+        required: true
+        enum:
+          - value: Male
+          - value: Female
+      - name: good_with_kids
+        logicalType: integer
+        physicalType: integer
+        required: false
+        description: 1 true, 0 false, null unknown.
+      - name: good_with_dogs
+        logicalType: integer
+        physicalType: integer
+        required: false
+        description: 1 true, 0 false, null unknown.
+      - name: good_with_cats
+        logicalType: integer
+        physicalType: integer
+        required: false
+        description: 1 true, 0 false, null unknown.
+      - name: image_url
+        logicalType: string
+        physicalType: text
+        required: false
+        description: A link to the rescue's own image. Never a copy.
+      - name: profile_url
+        logicalType: string
+        physicalType: text
+        required: false
+      - name: description
+        logicalType: string
+        physicalType: text
+        required: false
+        description: Hand written only.
+      - name: rescue_since_date
+        logicalType: date
+        physicalType: text
+        required: false
+        description: ISO date.
+      - name: first_seen_at
+        logicalType: date
+        physicalType: text
+        required: true
+        description: ISO date-time of the first snapshot that listed the dog, or creation time for hand-entered dogs.
+      - name: last_seen_at
+        logicalType: date
+        physicalType: text
+        required: true
+        description: ISO date-time of the latest snapshot that listed the dog.
+      - name: created_at
+        logicalType: date
+        physicalType: text
+        required: true
+      - name: updated_at
+        logicalType: date
+        physicalType: text
+        required: true
+
+  - name: dog_breeds
+    logicalType: object
+    physicalName: dog_breeds
+    physicalType: table
+    description: Breeds per dog in display order. Resolved names reference breeds; unresolved names are kept as text.
+    relationships:
+      - id: breed_of_dog
+        from: dog_breeds.dog_id
+        to: dogs.id
+    properties:
+      - name: dog_id
+        logicalType: string
+        physicalType: text
+        required: true
+      - name: display_order
+        logicalType: integer
+        physicalType: integer
+        required: true
+        description: 1 is the primary breed. Unique with dog_id.
+      - name: breed_name
+        logicalType: string
+        physicalType: text
+        required: false
+        description: Canonical name from breeds when resolved.
+      - name: unresolved_name
+        logicalType: string
+        physicalType: text
+        required: false
+        description: The source's text when no canonical breed matched. Exactly one of breed_name and unresolved_name is set.
+
+  - name: breeds
+    logicalType: object
+    physicalName: breeds
+    physicalType: table
+    description: Canonical breed names.
+    properties:
+      - name: name
+        logicalType: string
+        physicalType: text
+        required: true
+        unique: true
+        primaryKey: true
+
+  - name: breed_synonyms
+    logicalType: object
+    physicalName: breed_synonyms
+    physicalType: table
+    description: Informal names mapped to a canonical breed. Matched case-insensitively.
+    relationships:
+      - id: synonym_of_breed
+        from: breed_synonyms.breed_name
+        to: breeds.name
+    properties:
+      - name: synonym
+        logicalType: string
+        physicalType: text
+        required: true
+        unique: true
+        primaryKey: true
+      - name: breed_name
+        logicalType: string
+        physicalType: text
+        required: true
+
+  - name: dog_status_events
+    logicalType: object
+    physicalName: dog_status_events
+    physicalType: table
+    description: Append-only record of every status a dog has had and when it took effect. Drives the daily availability report.
+    relationships:
+      - id: status_of_dog
+        from: dog_status_events.dog_id
+        to: dogs.id
+    properties:
+      - name: id
+        logicalType: integer
+        physicalType: integer
+        required: true
+        unique: true
+        primaryKey: true
+      - name: dog_id
+        logicalType: string
+        physicalType: text
+        required: true
+      - name: rescue_id
+        logicalType: string
+        physicalType: text
+        required: true
+      - name: status
+        logicalType: string
+        physicalType: text
+        required: true
+      - name: effective_at
+        logicalType: date
+        physicalType: text
+        required: true
+        partitioned: true
+        description: The snapshot's capturedAt for finder changes.
+      - name: snapshot_id
+        logicalType: string
+        physicalType: text
+        required: false
+
+  - name: snapshots
+    logicalType: object
+    physicalName: snapshots
+    physicalType: table
+    description: >
+      One row per ingested snapshot; the idempotency record. The row is
+      claimed (status pending) before any dog is written, so a concurrent
+      replay of the same key cannot double-apply; it becomes done with its
+      result, or failed, in which case the same key and body may be
+      re-processed.
+    properties:
+      - name: id
+        logicalType: string
+        physicalType: text
+        required: true
+        unique: true
+        primaryKey: true
+      - name: rescue_id
+        logicalType: string
+        physicalType: text
+        required: true
+      - name: idempotency_key
+        logicalType: string
+        physicalType: text
+        required: true
+        unique: true
+      - name: body_hash
+        logicalType: string
+        physicalType: text
+        required: true
+        description: SHA-256 of the canonical request body, to detect a conflicting replay.
+      - name: captured_at
+        logicalType: date
+        physicalType: text
+        required: true
+      - name: processed_at
+        logicalType: date
+        physicalType: text
+        required: true
+      - name: adapter
+        logicalType: string
+        physicalType: text
+        required: true
+      - name: mode
+        logicalType: string
+        physicalType: text
+        required: true
+      - name: complete
+        logicalType: integer
+        physicalType: integer
+        required: true
+      - name: status
+        logicalType: string
+        physicalType: text
+        required: true
+        description: Where the snapshot is in processing.
+        enum:
+          - value: pending
+            description: Claimed; dogs are being written. A replay of the same key answers 409 until it is done.
+          - value: done
+            description: Applied; result holds the SnapshotResult returned to the caller.
+          - value: failed
+            description: A write failed part way; a replay with the same key and body re-processes it.
+      - name: result
+        logicalType: string
+        physicalType: text
+        required: false
+        description: The SnapshotResult JSON as returned. Present only when status is done.
+
+slaProperties:
+  - property: latency
+    value: 24
+    unit: h
+    description: A rescue's dogs reflect its website within a day of a capture run.
+
+team:
+  name: dogadopt
+  members:
+    - username: dataGriff
+      role: owner
+
+support:
+  - channel: https://github.com/dataGriff/dog-adopt-api/issues
+    tool: github

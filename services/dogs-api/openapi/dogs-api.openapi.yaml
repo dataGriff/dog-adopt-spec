@@ -1,0 +1,977 @@
+openapi: 3.1.0
+info:
+  title: Dogs API
+  version: 1.0.0
+  description: >
+    Public read API for dogs available for adoption at UK rescues, plus the
+    ingest endpoint the finder uses to post rescue snapshots. All responses
+    are JSON; errors are RFC 9457 problem details. Identifiers are UUIDs.
+    Pagination is page based with a hard maximum page size.
+  contact:
+    name: dogadopt
+    url: https://github.com/dataGriff/dog-adopt-spec
+  license:
+    name: MIT
+servers:
+  - url: https://api.dogadopt.co.uk
+    description: Production
+  - url: http://localhost:8787
+    description: Local wrangler dev
+tags:
+  - name: dogs
+    description: Dogs available for adoption.
+  - name: rescues
+    description: Rescue organisations.
+  - name: breeds
+    description: Recognised breed names.
+  - name: reports
+    description: Aggregated statistics.
+  - name: ingest
+    description: Finder snapshot ingestion. Requires a service token.
+  - name: system
+    description: Health and metadata.
+
+security: []
+
+paths:
+  /v1/health:
+    get:
+      operationId: getHealth
+      tags: [system]
+      summary: Liveness check
+      responses:
+        '200':
+          description: The service is up.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+
+  /v1/dogs:
+    get:
+      operationId: listDogs
+      tags: [dogs]
+      summary: List dogs
+      description: >
+        Returns dogs matching the filters, newest first. By default only dogs
+        a person could enquire about are returned (available, reserved,
+        fostered, on_hold); pass `status` to choose explicitly. When `lat`
+        and `lng` are given each dog carries a `distanceKm` from that point,
+        computed from its rescue's coordinates, and results are ordered by
+        distance; dogs whose rescue has no coordinates sort last.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: status
+          in: query
+          description: One or more statuses. Repeat the parameter or comma separate.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DogStatus'
+          style: form
+          explode: false
+        - name: size
+          in: query
+          schema:
+            $ref: '#/components/schemas/DogSize'
+        - name: age
+          in: query
+          schema:
+            $ref: '#/components/schemas/AgeCategory'
+        - name: gender
+          in: query
+          schema:
+            $ref: '#/components/schemas/Gender'
+        - name: breed
+          in: query
+          description: Canonical breed name. Matches dogs with that breed in any position.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - name: rescueId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: region
+          in: query
+          description: Exact match on the rescue's region.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - name: goodWithKids
+          in: query
+          schema:
+            type: boolean
+        - name: goodWithDogs
+          in: query
+          schema:
+            type: boolean
+        - name: goodWithCats
+          in: query
+          schema:
+            type: boolean
+        - name: q
+          in: query
+          description: Case-insensitive substring match on the dog's name or breed names.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - name: lat
+          in: query
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+        - name: lng
+          in: query
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+        - name: radiusKm
+          in: query
+          description: Only with lat and lng. Excludes dogs further away than this.
+          schema:
+            type: number
+            exclusiveMinimum: 0
+            maximum: 2000
+      responses:
+        '200':
+          description: A page of dogs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DogPage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /v1/dogs/{dogId}:
+    get:
+      operationId: getDog
+      tags: [dogs]
+      summary: Get a dog
+      parameters:
+        - $ref: '#/components/parameters/DogId'
+      responses:
+        '200':
+          description: The dog.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dog'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/rescues:
+    get:
+      operationId: listRescues
+      tags: [rescues]
+      summary: List rescues
+      description: Returns rescues alphabetically by name with a count of their listed dogs.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: region
+          in: query
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - name: q
+          in: query
+          description: Case-insensitive substring match on the rescue name.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - name: hasDogs
+          in: query
+          description: When true, only rescues with at least one listed dog.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: A page of rescues.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RescuePage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /v1/rescues/{rescueId}:
+    get:
+      operationId: getRescue
+      tags: [rescues]
+      summary: Get a rescue
+      parameters:
+        - $ref: '#/components/parameters/RescueId'
+      responses:
+        '200':
+          description: The rescue.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rescue'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/rescues/{rescueId}/dogs:
+    get:
+      operationId: listRescueDogs
+      tags: [rescues, dogs]
+      summary: List a rescue's dogs
+      description: Same filters and defaults as listDogs, scoped to one rescue.
+      parameters:
+        - $ref: '#/components/parameters/RescueId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: status
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DogStatus'
+          style: form
+          explode: false
+      responses:
+        '200':
+          description: A page of dogs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DogPage'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/breeds:
+    get:
+      operationId: listBreeds
+      tags: [breeds]
+      summary: List breeds
+      description: All canonical breed names, alphabetically, with their known synonyms.
+      responses:
+        '200':
+          description: Breeds.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                additionalProperties: false
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Breed'
+
+  /v1/reports/daily-availability:
+    get:
+      operationId: getDailyAvailability
+      tags: [reports]
+      summary: Daily count of available dogs
+      description: >
+        One row per calendar day (UTC) from `from` to `to` inclusive with the
+        number of dogs whose status was `available` at the end of that day.
+        Days before any data exists report zero.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: rescueId
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Daily counts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyAvailabilityReport'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /v1/ingest/rescues/{rescueId}/snapshots:
+    post:
+      operationId: ingestRescueSnapshot
+      tags: [ingest]
+      summary: Ingest a rescue snapshot
+      description: >
+        Reconciles a snapshot of the dogs currently listed on a rescue's
+        website into the dogs held for that rescue. Dogs are matched on
+        `externalId` within the rescue. New dogs are created, changed dogs
+        are updated, and when the snapshot is `complete` any dog of that
+        rescue that was previously listed by the finder but is absent from
+        the snapshot is marked `withdrawn`. Dogs with an unknown breed name
+        keep the breed as a free-text `unresolvedBreeds` entry and are not
+        rejected. The call is idempotent on the `Idempotency-Key` header:
+        a replay returns the original result.
+      security:
+        - serviceToken: []
+      parameters:
+        - $ref: '#/components/parameters/RescueId'
+        - name: Idempotency-Key
+          in: header
+          required: true
+          description: Unique per snapshot; the finder uses the snapshot event id.
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 128
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RescueSnapshot'
+      responses:
+        '200':
+          description: The snapshot was reconciled (or had already been, for a replayed key).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: The Idempotency-Key was already used with a different body.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /v1/ingest/rescues/{rescueId}/snapshots/{snapshotId}:
+    get:
+      operationId: getSnapshotResult
+      tags: [ingest]
+      summary: Get the result of a previous snapshot
+      security:
+        - serviceToken: []
+      parameters:
+        - $ref: '#/components/parameters/RescueId'
+        - name: snapshotId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The stored result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResult'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    serviceToken:
+      type: http
+      scheme: bearer
+      description: A long-lived service token issued to the finder. Not for browsers.
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 24
+    DogId:
+      name: dogId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    RescueId:
+      name: rescueId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: The request did not validate.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Missing or invalid service token.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: No such resource.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+    Health:
+      type: object
+      required: [status, version]
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          const: ok
+        version:
+          type: string
+          description: The deployed API version.
+
+    Problem:
+      type: object
+      description: RFC 9457 problem details.
+      required: [type, title, status, errorCode]
+      properties:
+        type:
+          type: string
+          format: uri
+          description: A URI identifying the problem type, e.g. https://api.dogadopt.co.uk/problems/validation.
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+        instance:
+          type: string
+        errorCode:
+          type: string
+          description: Stable machine-readable code.
+          enum:
+            - validation_failed
+            - not_found
+            - unauthorized
+            - idempotency_conflict
+            - internal_error
+        errors:
+          type: array
+          description: Field-level validation errors, when errorCode is validation_failed.
+          items:
+            type: object
+            required: [path, message]
+            additionalProperties: false
+            properties:
+              path:
+                type: string
+              message:
+                type: string
+
+    DogStatus:
+      type: string
+      description: >
+        available: can be enquired about. reserved: an adoption is in
+        progress. fostered: in a foster home but still available. on_hold:
+        temporarily not available. adopted: rehomed. withdrawn: no longer
+        listed by the rescue.
+      enum: [available, reserved, fostered, on_hold, adopted, withdrawn]
+
+    AgeCategory:
+      type: string
+      enum: [Puppy, Young, Adult, Senior]
+      description: >
+        Puppy under 1 year, Young 1 to 3 years, Adult 3 to 8 years, Senior
+        8 years and over. When a birth date is known the API derives this
+        and it takes precedence over the category the source site gave.
+
+    DogSize:
+      type: string
+      enum: [Small, Medium, Large]
+
+    Gender:
+      type: string
+      enum: [Male, Female]
+
+    Compatibility:
+      type: [boolean, 'null']
+      description: true if good with, false if not, null if the rescue has not said.
+
+    RescueSummary:
+      type: object
+      required: [id, name, region, website]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        region:
+          type: string
+        website:
+          type: [string, 'null']
+          format: uri
+
+    Dog:
+      type: object
+      required:
+        - id
+        - name
+        - status
+        - age
+        - size
+        - gender
+        - breeds
+        - unresolvedBreeds
+        - goodWithKids
+        - goodWithDogs
+        - goodWithCats
+        - imageUrl
+        - profileUrl
+        - description
+        - birthYear
+        - birthMonth
+        - birthDay
+        - rescueSinceDate
+        - statusNotes
+        - rescue
+        - firstSeenAt
+        - lastSeenAt
+        - createdAt
+        - updatedAt
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/DogStatus'
+        age:
+          $ref: '#/components/schemas/AgeCategory'
+        size:
+          $ref: '#/components/schemas/DogSize'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        breeds:
+          type: array
+          description: Canonical breed names in display order. Empty when none could be resolved.
+          items:
+            type: string
+        unresolvedBreeds:
+          type: array
+          description: Breed names from the source that did not resolve to a canonical breed.
+          items:
+            type: string
+        goodWithKids:
+          $ref: '#/components/schemas/Compatibility'
+        goodWithDogs:
+          $ref: '#/components/schemas/Compatibility'
+        goodWithCats:
+          $ref: '#/components/schemas/Compatibility'
+        imageUrl:
+          type: [string, 'null']
+          format: uri
+          description: A link to the rescue's own image. Images are never copied.
+        profileUrl:
+          type: [string, 'null']
+          format: uri
+          description: The dog's page on the rescue's website.
+        description:
+          type: [string, 'null']
+          description: Only ever written by hand; the finder never copies descriptions.
+        birthYear:
+          type: [integer, 'null']
+          minimum: 1990
+          maximum: 2100
+        birthMonth:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 12
+        birthDay:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 31
+        rescueSinceDate:
+          type: [string, 'null']
+          format: date
+        statusNotes:
+          type: [string, 'null']
+        rescue:
+          $ref: '#/components/schemas/RescueSummary'
+        distanceKm:
+          type: number
+          description: Only present when the request gave lat and lng and the rescue has coordinates.
+        firstSeenAt:
+          type: string
+          format: date-time
+          description: When the finder first captured this dog.
+        lastSeenAt:
+          type: string
+          format: date-time
+          description: When the finder last saw this dog listed.
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PageMeta:
+      type: object
+      required: [page, pageSize, total, totalPages]
+      additionalProperties: false
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+
+    DogPage:
+      type: object
+      required: [items, meta]
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dog'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
+
+    RescueType:
+      type: string
+      description: ADCH membership type.
+      enum: [Full, Provisional]
+
+    Rescue:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - region
+        - website
+        - phone
+        - email
+        - address
+        - postcode
+        - charityNumber
+        - contactNotes
+        - latitude
+        - longitude
+        - dogCount
+        - createdAt
+        - updatedAt
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/RescueType'
+        region:
+          type: string
+        website:
+          type: [string, 'null']
+          format: uri
+        phone:
+          type: [string, 'null']
+        email:
+          type: [string, 'null']
+        address:
+          type: [string, 'null']
+        postcode:
+          type: [string, 'null']
+        charityNumber:
+          type: [string, 'null']
+        contactNotes:
+          type: [string, 'null']
+        latitude:
+          type: [number, 'null']
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: [number, 'null']
+          minimum: -180
+          maximum: 180
+        dogCount:
+          type: integer
+          minimum: 0
+          description: Dogs with status available, reserved, fostered or on_hold.
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    RescuePage:
+      type: object
+      required: [items, meta]
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rescue'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
+
+    Breed:
+      type: object
+      required: [name, synonyms]
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        synonyms:
+          type: array
+          items:
+            type: string
+
+    DailyAvailabilityReport:
+      type: object
+      required: [from, to, rescueId, items]
+      additionalProperties: false
+      properties:
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+        rescueId:
+          type: [string, 'null']
+          format: uuid
+        items:
+          type: array
+          items:
+            type: object
+            required: [date, availableCount]
+            additionalProperties: false
+            properties:
+              date:
+                type: string
+                format: date
+              availableCount:
+                type: integer
+                minimum: 0
+
+    FoundDogStatus:
+      type: string
+      description: The statuses a rescue website can express. Withdrawal is inferred by absence.
+      enum: [available, reserved, fostered, on_hold]
+
+    FoundDog:
+      type: object
+      description: >
+        One dog as seen on a rescue website. Only factual, non-copyrightable
+        data: no descriptions, no copied images. `externalId` must be stable
+        across captures of the same dog; the dog's page URL slug is the
+        usual choice.
+      required: [externalId, name, age, size, gender, breeds]
+      additionalProperties: false
+      properties:
+        externalId:
+          type: string
+          minLength: 1
+          maxLength: 200
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/FoundDogStatus'
+          default: available
+        age:
+          $ref: '#/components/schemas/AgeCategory'
+        size:
+          $ref: '#/components/schemas/DogSize'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        breeds:
+          type: array
+          description: Breed names as written on the site; the API resolves synonyms.
+          maxItems: 5
+          items:
+            type: string
+            minLength: 1
+            maxLength: 100
+        goodWithKids:
+          $ref: '#/components/schemas/Compatibility'
+          default: null
+        goodWithDogs:
+          $ref: '#/components/schemas/Compatibility'
+          default: null
+        goodWithCats:
+          $ref: '#/components/schemas/Compatibility'
+          default: null
+        profileUrl:
+          type: [string, 'null']
+          format: uri
+          default: null
+        imageUrl:
+          type: [string, 'null']
+          format: uri
+          default: null
+        birthYear:
+          type: [integer, 'null']
+          minimum: 1990
+          maximum: 2100
+          default: null
+        birthMonth:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 12
+          default: null
+        birthDay:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 31
+          default: null
+        rescueSinceDate:
+          type: [string, 'null']
+          format: date
+          default: null
+
+    SnapshotSource:
+      type: object
+      required: [adapter, url, mode]
+      additionalProperties: false
+      properties:
+        adapter:
+          type: string
+          description: The finder adapter name, e.g. cardiff-dogs-home.
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+        url:
+          type: string
+          format: uri
+          description: The listing page the snapshot came from.
+        mode:
+          type: string
+          description: live means the site was fetched; fixture means saved HTML was parsed.
+          enum: [live, fixture]
+        adapterVersion:
+          type: string
+          description: Version of the adapter's parsing rules.
+
+    RescueSnapshot:
+      type: object
+      description: Every dog listed on a rescue's website at one moment.
+      required: [capturedAt, source, complete, dogs]
+      additionalProperties: false
+      properties:
+        capturedAt:
+          type: string
+          format: date-time
+        source:
+          $ref: '#/components/schemas/SnapshotSource'
+        complete:
+          type: boolean
+          description: >
+            true when the snapshot holds every dog the site lists, so absence
+            means withdrawn. false for a partial capture; nothing is withdrawn.
+        dogs:
+          type: array
+          maxItems: 2000
+          items:
+            $ref: '#/components/schemas/FoundDog'
+
+    SnapshotResult:
+      type: object
+      required: [snapshotId, rescueId, capturedAt, processedAt, counts, rejected]
+      additionalProperties: false
+      properties:
+        snapshotId:
+          type: string
+          format: uuid
+        rescueId:
+          type: string
+          format: uuid
+        capturedAt:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+        counts:
+          type: object
+          required: [received, created, updated, unchanged, withdrawn, rejected]
+          additionalProperties: false
+          properties:
+            received:
+              type: integer
+              minimum: 0
+            created:
+              type: integer
+              minimum: 0
+            updated:
+              type: integer
+              minimum: 0
+            unchanged:
+              type: integer
+              minimum: 0
+            withdrawn:
+              type: integer
+              minimum: 0
+            rejected:
+              type: integer
+              minimum: 0
+        rejected:
+          type: array
+          description: Dogs that could not be stored, with the reason. Never fails the whole snapshot.
+          items:
+            type: object
+            required: [externalId, reason]
+            additionalProperties: false
+            properties:
+              externalId:
+                type: string
+              reason:
+                type: string

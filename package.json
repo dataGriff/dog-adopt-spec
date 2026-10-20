@@ -1,0 +1,65 @@
+{
+  "name": "@dogadopt/contracts",
+  "version": "0.1.0",
+  "description": "Dog Adopt system contracts: OpenAPI, AsyncAPI, feature files, data contracts, and the generated TypeScript types, zod schemas and API client every service consumes.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dataGriff/dog-adopt-spec.git"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./openapi.json": "./dist/openapi.json",
+    "./finder.asyncapi.json": "./dist/finder.asyncapi.json",
+    "./dogs-api.asyncapi.json": "./dist/dogs-api.asyncapi.json",
+    "./seed/rescues.json": "./dist/seed/rescues.json",
+    "./seed/breeds.json": "./dist/seed/breeds.json"
+  },
+  "files": [
+    "dist",
+    "services",
+    "system.yaml"
+  ],
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "validate": "node scripts/validate.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "check:drift": "node scripts/check-drift.mjs",
+    "build": "npm run generate && npm run validate && npm run typecheck && npm run test",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.17.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@asyncapi/parser": "^3.6.6",
+    "@cucumber/gherkin": "^42.0.1",
+    "@cucumber/messages": "^34.2.1",
+    "@redocly/cli": "^2.65.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "openapi-typescript": "^7.13.0",
+    "orval": "^8.43.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.12",
+    "@types/node": "^22.16.5",
+    "yaml": "^2.8.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "sideEffects": false
+}

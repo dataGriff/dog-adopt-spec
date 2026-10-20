@@ -1,0 +1,33 @@
+apiVersion: sysspec/v1
+kind: Service
+name: web
+title: Web
+domain: Animal Welfare
+owner: dogadopt
+version: 1.0.0
+summary: >
+  The public website. Lets people browse, filter and locate dogs available
+  for adoption and find the rescue that holds each one. Reads only from
+  the Dogs API through the generated client; it has no database of its own.
+runtime:
+  platform: cloudflare-pages
+  repository: https://github.com/dataGriff/dog-adopt-web
+artifacts:
+  - kind: feature
+    path: features/browse-dogs.feature
+    version: 1.0.0
+    gated: true
+    summary: Acceptance criteria for the public browsing experience.
+produces: []
+consumes: []
+dependsOn:
+  - service: dogs-api
+    operation: listDogs
+  - service: dogs-api
+    operation: getDog
+  - service: dogs-api
+    operation: listRescues
+  - service: dogs-api
+    operation: getRescue
+  - service: dogs-api
+    operation: listBreeds
